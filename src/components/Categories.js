@@ -1,14 +1,20 @@
 import React from 'react';
 import '../styles/Categories.css'; 
 
+
 const Categories = () => {
+  const handleClick = () => {
+    window.location.href = '/overzicht';
+  };
+
+
   return (
     <section className="categories">
       <h2 className="categories__title">Populaire recepten</h2>
       <div className="categories__grid">
         <div className="category-card">
           <div className="category-card__image category-card__image--red">
-            <span className="category-card__label">Hoofdgerechten</span>
+            <button onClick={handleClick} className="category-card__label">Hoofdgerechten</button>
           </div>
         </div>
         <div className="category-card">
@@ -25,5 +31,6 @@ const Categories = () => {
     </section>
   );
 };
+
 
 export default Categories;
