@@ -1,4 +1,6 @@
-.zoekbalk{
+button{
+    cursor: pointer;
+}.zoekbalk{
     display: flex;
     justify-content: center ;
     gap:40px;
