@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import '../styles/Recepten.css';
 
-const Zoekbalk = () => {
+const Recepten = () => {
   const [recipes, setRecipes] = useState([]);
+  const [categoryName, setCategoryName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Get category_id from URL parameters only
   const { id } = useParams();
 
   useEffect(() => {
-    const fetchRecipes = async () => {
+    const fetchData = async () => {
       if (!id) {
         setError('No category ID provided');
         setLoading(false);
@@ -20,40 +20,66 @@ const Zoekbalk = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:8000/api/recipes/categories/${id}`);
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        const [recipesResponse, categoriesResponse] = await Promise.all([
+          fetch(`http://localhost:8000/api/recipes/categories/${id}`),
+          fetch(`http://localhost:8000/api/categories`)
+        ]);
+        
+        if (!recipesResponse.ok || !categoriesResponse.ok) {
+          throw new Error('Failed to fetch data');
         }
         
-        const data = await response.json();
-        setRecipes(data);
+        const recipesData = await recipesResponse.json();
+        const categoriesData = await categoriesResponse.json();
+        const category = categoriesData.find(cat => cat.id == id);
+        
+        setRecipes(recipesData);
+        setCategoryName(category ? category.category_name : `Category ${id}`);
+        
       } catch (err) {
         setError(err.message);
-        console.error('Error fetching recipes:', err);
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchRecipes();
+    fetchData();
   }, [id]);
 
-  if (loading) return <div>Loading recipes...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (loading) return <div>Recepten laden...</div>;
+  if (error) return <div>foutmelding: {error}</div>;
 
   return (
-    <article>
-      <h2>Recipes for Category {id}</h2>
+    <article className='recipe-list'>
+      <h2 className='recipe-title'>{categoryName} recepten</h2>
       {recipes.length === 0 ? (
-        <p>No recipes found for this category.</p>
+        <p>Geen recepten gevonden.</p>
       ) : (
         <div className="recipes-grid">
-          {recipes.map((recipe) => (
-            <div key={recipe.id} className="recipe-card">
-              <h3>{recipe.title}</h3>
-              <p>{recipe.description}</p>
-            </div>
+          {recipes.map((recipe, index) => (
+            <Link 
+              key={recipe.id || recipe.recipe_id || `recipe-${index}`}
+              to={`/recept/${recipe.id || recipe.recipe_id || recipe.recipeId}`}
+              className="recipe-card-link"
+            >
+              <div className="recipe-card">
+                {recipe.image && (
+                  <div className="recipe-image-container">
+                    <img 
+                      src={recipe.image}
+                      onLoad={() => console.log('Image loaded successfully:', recipe.image)}
+                      alt={recipe.recipe_name}
+                      className="recipe-image"
+                    />
+                    <div className="recipe-name-overlay">
+                      <h3>{recipe.recipe_name}</h3>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Link>
           ))}
         </div>
       )}
@@ -61,4 +87,4 @@ const Zoekbalk = () => {
   );
 };
 
-export default Zoekbalk;
+export default Recepten;

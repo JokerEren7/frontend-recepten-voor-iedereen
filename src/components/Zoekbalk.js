@@ -1,35 +1,176 @@
-import React from 'react';
+import React, { useState } from 'react';
 import '../styles/Zoekbalk.css';
 import zoekknop from '../assets/images/zoekknop.png';
 
-const Zoekbalk = () => {
+const Zoekbalk = ({ onSearchResults }) => {
+  const [searchData, setSearchData] = useState({
+    recipe_name: '',
+    category_id: '',
+    ingredients: '',
+    difficulty: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSearchData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const getCategoryId = (categoryName) => {
+    const categoryMap = {
+      'Ontbijt': 1,
+      'Hoofdgerechten': 2,
+      'Soepen': 3
+    };
+    return categoryMap[categoryName] || '';
+  };
+
+  const getDifficultyValue = (difficultyName) => {
+    const difficultyMap = {
+      'Makkelijk': 'easy',
+      'Gemiddeld': 'medium', 
+      'Moeilijk': 'hard'
+    };
+    return difficultyMap[difficultyName] || '';
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const searchParams = new URLSearchParams();
+      
+      if (searchData.recipe_name.trim()) {
+        searchParams.append('recipe_name', searchData.recipe_name.trim());
+      }
+      
+      if (searchData.category_id) {
+        const categoryId = getCategoryId(searchData.category_id);
+        if (categoryId) {
+          searchParams.append('category_id', categoryId);
+        }
+      }
+      
+      if (searchData.ingredients.trim()) {
+        searchParams.append('ingredients', searchData.ingredients.trim());
+      }
+      
+      if (searchData.difficulty) {
+        const difficultyValue = getDifficultyValue(searchData.difficulty);
+        if (difficultyValue) {
+          searchParams.append('difficulty', difficultyValue);
+        }
+      }
+
+      const response = await fetch(`/api/recipes/search?${searchParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const results = await response.json();
+      
+      if (onSearchResults) {
+        onSearchResults(results);
+      }
+      
+      console.log('Search results:', results);
+
+    } catch (err) {
+      console.error('Search error:', err);
+      setError('Er is een fout opgetreden bij het zoeken. Probeer het opnieuw.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <section className='zoekbalk'>
         <div className='zoek-input'>
-            <input className='zoeken' placeholder='Waar ben je naar op zoek?'></input>     
+            <input 
+              className='zoeken' 
+              name='recipe_name'
+              value={searchData.recipe_name}
+              onChange={handleInputChange}
+              placeholder='Waar ben je naar op zoek?'
+            />
         </div>
         <div className='filter'>
-            <select className='categorie filter-input' type='combobox'>
-                <option>Ontbijt</option>
-                <option>Hoofdgerechten</option>
-                <option>Soepen</option>
+            <select 
+              className='categorie filter-input' 
+              name='category_id'
+              value={searchData.category_id}
+              onChange={handleInputChange}
+              type='combobox'
+            >
+                <option value=''>Ontbijt</option>
+                <option value='Ontbijt'>Ontbijt</option>
+                <option value='Hoofdgerechten'>Hoofdgerechten</option>
+                <option value='Soepen'>Soepen</option>
             </select>
         </div>
         <div className='filter'>
-            <input className='ingredients filter-input' placeholder='Ingrediënten'></input>
+            <input 
+              className='ingredients filter-input' 
+              name='ingredients'
+              value={searchData.ingredients}
+              onChange={handleInputChange}
+              placeholder='Ingrediënten'
+            />
         </div>
         <div className='filter'>
-            <select className='difficulty filter-input' type='combobox'>
-                <option>Makkelijk</option>
-                <option>Gemiddeld</option>
-                <option>Moeilijk</option>
+            <select 
+              className='difficulty filter-input' 
+              name='difficulty'
+              value={searchData.difficulty}
+              onChange={handleInputChange}
+              type='combobox'
+            >
+                <option value=''>Makkelijk</option>
+                <option value='Makkelijk'>Makkelijk</option>
+                <option value='Gemiddeld'>Gemiddeld</option>
+                <option value='Moeilijk'>Moeilijk</option>
             </select>
         </div>
-        <div>
-            <button className='zoekknop'><img id='zoekknop-img' src={zoekknop} alt='zoeken'></img></button>
+        <div className='zoekknop-container'>
+            <button 
+              className='zoekknop'
+              onClick={handleSearch}
+              disabled={isLoading}
+            >
+              <img 
+                id='zoekknop-img' 
+                src={zoekknop} 
+                alt='zoeken'
+                style={{ opacity: isLoading ? 0.5 : 1 }}
+              />
+            </button>
         </div>
+        
+        {error && (
+          <div className="error-message" style={{ color: 'red' }}>
+            {error}
+          </div>
+        )}
+        
+        {isLoading && (
+          <div className="loading-message" style={{ marginTop: '10px' }}>
+            Zoeken...
+          </div>
+        )}
     </section>
-      );
+  );
 };
 
 export default Zoekbalk;

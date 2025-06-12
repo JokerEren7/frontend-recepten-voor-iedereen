@@ -1,15 +1,18 @@
 button{
     cursor: pointer;
-}.zoekbalk{
+}
+.zoekbalk{
+    margin-top:100px;
     display: flex;
     justify-content: center ;
     gap:40px;
 }
 .zoeken{
     width:400px;
-    height:25px;
+    height:40px;
     padding-left:10px
 }
+
 select {
     appearance: none;
     -webkit-appearance: none;
@@ -20,7 +23,7 @@ select {
     background-size: 30px 24px;
 }
 .filter{
-    height:25px;
+    height:40px;
     width:150px;
 }
 .filter-input{
@@ -30,10 +33,64 @@ select {
 
 }
 #zoekknop-img{
-    width:20px;
-    height:20px;
+    width:35px;
+    height:35px;
 }
 .zoekknop{
     background-color: #4ED255;
     border: none;
+}
+
+@media screen and (max-width: 1056px) {
+    .zoekbalk {
+        gap: 20px; /* Reduce gap between elements */
+    }
+    
+    .zoeken {
+        width: 250px; /* Make search input smaller */
+    }
+    
+    .filter {
+        width: 120px; /* Make filter dropdown smaller */
+    }
+}
+
+@media screen and (max-width: 735px) {
+    .zoekbalk {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        padding: 0 20px; /* Add some padding from screen edges */
+    }
+
+    .zoek-input{
+        width: 90%;
+        max-width: 500px;
+    }
+    
+    .zoeken {
+        width: 90%;
+        max-width: 400px;
+    }
+    
+    .filter {
+        width: 90%; /* Nearly full width */
+        max-width: 400px;
+    }
+
+    .zoekknop-container{
+        width:150px;
+        height:35px;
+    }
+    
+    .zoekknop {
+        width: 90%;
+        max-width: 400px;
+        height: 100%;
+    }
+
+    #zoekknop-img{
+        width:35px;
+        height:35px;
+    }
 }
