@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import Overzicht from './pages/Overzicht';
 import Contact from './pages/Contact';
 import OverOns from './pages/OverOns';
+
 function App() {
   return (
        <Router>
@@ -15,10 +16,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/overzicht/:id" element={<Overzicht />} />
-          <Route path="/contact" element={<Contact />} />
+           <Route path="/contact" element={<Contact />} />
           <Route path="/over-ons" element={<OverOns />} />
         </Routes>
-        <Footer /> 
+        <Footer />    
       </div>
     </Router>
   );
@@ -26,3 +27,4 @@ function App() {
 }
 
 export default App;
+
