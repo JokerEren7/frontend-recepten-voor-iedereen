@@ -7,7 +7,6 @@ const Zoekbalk = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // Get category_id from URL parameters only
   const { id } = useParams();
 
   useEffect(() => {

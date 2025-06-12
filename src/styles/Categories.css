@@ -1,5 +1,6 @@
 .categories {
   padding: 40px 20px;
+  margin-bottom: 60px;
   text-align: center;
 }
 
@@ -11,7 +12,7 @@
 .categories__grid {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 100px;
   flex-wrap: wrap;
 }
 
@@ -38,18 +39,6 @@
   justify-content: center;
 }
 
-.category-card__image--red {
-  background-color: #e57373; /* tijdelijk */
-}
-
-.category-card__image--orange {
-  background-color: #ffb74d; /* tijdelijk */
-}
-
-.category-card__image--green {
-  background-color: #81c784; /* tijdelijk */
-}
-
 .category-card__label {
   background-color: #4caf50;
   color: white;
@@ -57,9 +46,15 @@
   font-size: 14px;
   border-radius: 6px;
   font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* Responsive */
+.category-card__label:hover {
+  background-color: #45a049;
+}
+
 @media (max-width: 900px) {
   .category-card {
     width: 45%;

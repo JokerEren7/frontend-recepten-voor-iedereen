@@ -1,9 +1,12 @@
 import React from 'react';
-import '../styles/Footer.css'; 
+import '../styles/Footer.css';
+
+import facebookImg from '../assets/images/facebook-new.png';
+import twitterImg from '../assets/images/twitter.png';
+import instagramImg from '../assets/images/instagramwit.png';
 
 const Footer = () => {
   return (
-    
     <footer className="footer">
       <div className="footer__container">
         <div className="footer__section">
@@ -23,9 +26,9 @@ const Footer = () => {
         <div className="footer__section footer__socials">
           <h4>Volg ons</h4>
           <div className="footer__icons">
-            <i className="fa fa-facebook"></i>
-            <i className="fa fa-twitter"></i>
-            <i className="fa fa-instagram"></i>
+            <img src={facebookImg} alt="Facebook" />
+        <img src={twitterImg} alt="Twitter" className="twitter-icon" />
+            <img src={instagramImg} alt="Instagram" />
           </div>
         </div>
       </div>
