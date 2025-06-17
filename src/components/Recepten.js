@@ -32,7 +32,7 @@ const Recepten = () => {
         
         const recipesData = await recipesResponse.json();
         const categoriesData = await categoriesResponse.json();
-        const category = categoriesData.find(cat => cat.id === id);
+        const category = categoriesData.find(cat => cat.id == id);
         
         setRecipes(recipesData);
         setCategoryName(category ? category.category_name : `Category ${id}`);

@@ -7,6 +7,8 @@ import Home from './pages/Home';
 import Overzicht from './pages/Overzicht';
 import Contact from './pages/Contact';
 import OverOns from './pages/OverOns';
+import Recept from './pages/Detail';
+
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/overzicht/:id" element={<Overzicht />} />
+          <Route path="/recept/:id" element={<Recept />} />
+
            <Route path="/contact" element={<Contact />} />
           <Route path="/over-ons" element={<OverOns />} />
         </Routes>

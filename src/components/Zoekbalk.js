@@ -114,7 +114,6 @@ const Zoekbalk = ({ onSearchResults }) => {
               onChange={handleInputChange}
               type='combobox'
             >
-                <option value=''>Ontbijt</option>
                 <option value='Ontbijt'>Ontbijt</option>
                 <option value='Hoofdgerechten'>Hoofdgerechten</option>
                 <option value='Soepen'>Soepen</option>
@@ -137,7 +136,6 @@ const Zoekbalk = ({ onSearchResults }) => {
               onChange={handleInputChange}
               type='combobox'
             >
-                <option value=''>Makkelijk</option>
                 <option value='Makkelijk'>Makkelijk</option>
                 <option value='Gemiddeld'>Gemiddeld</option>
                 <option value='Moeilijk'>Moeilijk</option>

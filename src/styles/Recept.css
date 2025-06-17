@@ -1,4 +1,31 @@
+.recipe-info{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 .image{
     width:550px;
-    margin-top:100px;
+    margin-top:50px;
+}
+
+.recipe-text{
+    width:50%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align:left
+}
+
+.people{
+    text-align: center;
+    width:20px;
+}
+
+.nutritional-values{
+    margin-top:50px;
+}
+
+.instructions{
+    margin-top:50px;
+    margin-bottom:50px;
 }
