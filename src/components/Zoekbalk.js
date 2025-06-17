@@ -22,8 +22,8 @@ const Zoekbalk = ({ onSearchResults }) => {
 
   const getCategoryId = (categoryName) => {
     const categoryMap = {
-      'Ontbijt': 1,
-      'Hoofdgerechten': 2,
+      'Hoofdgerechten': 1,
+      'Ontbijt': 2,
       'Soepen': 3
     };
     return categoryMap[categoryName] || '';
@@ -38,63 +38,63 @@ const Zoekbalk = ({ onSearchResults }) => {
     return difficultyMap[difficultyName] || '';
   };
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
+const handleSearch = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError('');
 
-    try {
-      const searchParams = new URLSearchParams();
-      
-      if (searchData.recipe_name.trim()) {
-        searchParams.append('recipe_name', searchData.recipe_name.trim());
-      }
-      
-      if (searchData.category_id) {
-        const categoryId = getCategoryId(searchData.category_id);
-        if (categoryId) {
-          searchParams.append('category_id', categoryId);
-        }
-      }
-      
-      if (searchData.ingredients.trim()) {
-        searchParams.append('ingredients', searchData.ingredients.trim());
-      }
-      
-      if (searchData.difficulty) {
-        const difficultyValue = getDifficultyValue(searchData.difficulty);
-        if (difficultyValue) {
-          searchParams.append('difficulty', difficultyValue);
-        }
-      }
+  try {
+    const searchParams = new URLSearchParams();
 
-      const response = await fetch(`/api/recipes/search?${searchParams.toString()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        }
-      });
+ if (searchData.recipe_name.trim()) {
+  searchParams.append('recipe_name', searchData.recipe_name.trim());
+}
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+const categoryId = getCategoryId(searchData.category_id);
+if (categoryId) {
+  searchParams.append('category_id', categoryId);
+}
+
+if (searchData.ingredients.trim()) {
+  searchParams.append('ingredients', searchData.ingredients.trim());
+}
+
+const difficultyValue = getDifficultyValue(searchData.difficulty);
+if (difficultyValue) {
+  searchParams.append('difficulty', difficultyValue);
+}
+
+
+    console.log('Search parameters:', searchParams.toString());
+
+    const response = await fetch(`http://localhost:8000/api/recipes/search?${searchParams.toString()}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       }
+    });
 
-      const results = await response.json();
-      
-      if (onSearchResults) {
-        onSearchResults(results);
-      }
-      
-      console.log('Search results:', results);
+    console.log('Fetch response status:', response.status);
 
-    } catch (err) {
-      console.error('Search error:', err);
-      setError('Er is een fout opgetreden bij het zoeken. Probeer het opnieuw.');
-    } finally {
-      setIsLoading(false);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+
+    const results = await response.json();
+    console.log('Search results:', results);
+
+    if (onSearchResults) {
+      onSearchResults(results);
+    }
+
+  } catch (err) {
+    console.error('Search error:', err);
+    setError('Er is een fout opgetreden bij het zoeken. Probeer het opnieuw.');
+  } finally {
+    setIsLoading(false);
+  }
+};
   return (
     <section className='zoekbalk'>
         <div className='zoek-input'>
@@ -107,17 +107,18 @@ const Zoekbalk = ({ onSearchResults }) => {
             />
         </div>
         <div className='filter'>
-            <select 
-              className='categorie filter-input' 
-              name='category_id'
-              value={searchData.category_id}
-              onChange={handleInputChange}
-              type='combobox'
-            >
-                <option value='Ontbijt'>Ontbijt</option>
-                <option value='Hoofdgerechten'>Hoofdgerechten</option>
-                <option value='Soepen'>Soepen</option>
-            </select>
+<select 
+  className='categorie filter-input' 
+  name='category_id'
+  value={searchData.category_id}
+  onChange={handleInputChange}
+  type='combobox'
+>
+  <option value="">Categorie</option>
+  <option value="Ontbijt">Ontbijt</option>
+  <option value="Hoofdgerechten">Hoofdgerechten</option>
+  <option value="Soepen">Soepen</option>
+</select>
         </div>
         <div className='filter'>
             <input 
@@ -136,9 +137,12 @@ const Zoekbalk = ({ onSearchResults }) => {
               onChange={handleInputChange}
               type='combobox'
             >
-                <option value='Makkelijk'>Makkelijk</option>
-                <option value='Gemiddeld'>Gemiddeld</option>
-                <option value='Moeilijk'>Moeilijk</option>
+          <option value="">Moeilijkheid</option>
+
+         <option value='Makkelijk'>Makkelijk</option>
+<option value='Gemiddeld'>Gemiddeld</option>
+<option value='Moeilijk'>Moeilijk</option>
+
             </select>
         </div>
         <div className='zoekknop-container'>

@@ -1,0 +1,28 @@
+.recepten-container {
+  padding: 40px;
+}
+
+.recepten-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.recept-kaart {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.recept-kaart img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.recept-kaart h3 {
+  padding: 10px;
+  font-size: 18px;
+}

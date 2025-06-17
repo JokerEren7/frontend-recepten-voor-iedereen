@@ -1,96 +1,94 @@
 button{
     cursor: pointer;
 }
-.zoekbalk{
-    margin-top:100px;
-    display: flex;
-    justify-content: center ;
-    gap:40px;
+.zoekbalk {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
-.zoeken{
-    width:400px;
-    height:40px;
-    padding-left:10px
+
+.zoeken, .filter-input {
+  height: 40px;
+  padding-left: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.zoeken:focus, .filter-input:focus {
+  border-color: #4caf50;
+}
+
+.filter {
+  width: 160px;
+  position: relative;
+}
+
+.filter-input {
+  width: 100%;
 }
 
 select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234CAF50' stroke='%23000000' stroke-width='1'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
-    background-position: right 10px center;
-    background-repeat: no-repeat;
-    background-size: 30px 24px;
-}
-.filter{
-    height:40px;
-    width:150px;
-}
-.filter-input{
-    width:100%;
-    height:100%;
-    padding-left: 10px;
-
-}
-#zoekknop-img{
-    width:35px;
-    height:35px;
-}
-.zoekknop{
-    background-color: #4ED255;
-    border: none;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234CAF50' stroke='%23000000' stroke-width='1'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  padding-right: 30px;
 }
 
-@media screen and (max-width: 1056px) {
-    .zoekbalk {
-        gap: 20px; /* Reduce gap between elements */
-    }
-    
-    .zoeken {
-        width: 250px; /* Make search input smaller */
-    }
-    
-    .filter {
-        width: 120px; /* Make filter dropdown smaller */
-    }
+.zoekknop {
+  background-color: #4ed255;
+  border: none;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  cursor: pointer;
 }
 
-@media screen and (max-width: 735px) {
-    .zoekbalk {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-        padding: 0 20px; /* Add some padding from screen edges */
-    }
+.zoekknop:hover {
+  background-color: #3cbf47;
+}
 
-    .zoek-input{
-        width: 90%;
-        max-width: 500px;
-    }
-    
-    .zoeken {
-        width: 90%;
-        max-width: 400px;
-    }
-    
-    .filter {
-        width: 90%; /* Nearly full width */
-        max-width: 400px;
-    }
+#zoekknop-img {
+  width: 26px;
+  height: 26px;
+  transition: opacity 0.3s ease;
+}
 
-    .zoekknop-container{
-        width:150px;
-        height:35px;
-    }
-    
-    .zoekknop {
-        width: 90%;
-        max-width: 400px;
-        height: 100%;
-    }
+@media screen and (max-width: 768px) {
+  .zoekbalk {
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+  }
 
-    #zoekknop-img{
-        width:35px;
-        height:35px;
-    }
+  .zoeken, .filter, .zoek-input, .zoekknop {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .zoekknop {
+    border-radius: 8px;
+    height: 45px;
+  }
+
+  #zoekknop-img {
+    width: 28px;
+    height: 28px;
+  }
 }

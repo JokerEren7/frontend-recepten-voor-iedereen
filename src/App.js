@@ -8,6 +8,7 @@ import Overzicht from './pages/Overzicht';
 import Contact from './pages/Contact';
 import OverOns from './pages/OverOns';
 import Recept from './pages/Detail';
+import ReceptenOverzicht from './pages/ReceptenOverzicht'; 
 
 
 function App() {
@@ -15,15 +16,20 @@ function App() {
        <Router>
       <div className="App">
         <Navbar />
+          <main>
+
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/overzicht/:id" element={<Overzicht />} />
           <Route path="/recept/:id" element={<Recept />} />
+        <Route path="/recepten" element={<ReceptenOverzicht />} />
 
            <Route path="/contact" element={<Contact />} />
           <Route path="/over-ons" element={<OverOns />} />
         </Routes>
-        <Footer />    
+                </main>
+
+        <Footer />
       </div>
     </Router>
   );
@@ -31,4 +37,3 @@ function App() {
 }
 
 export default App;
-

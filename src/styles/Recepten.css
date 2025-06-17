@@ -52,6 +52,9 @@
     text-overflow: ellipsis;
 }
 
+
+
+
 @media screen and (max-width:1056px) {
 
     .recipes-grid {
