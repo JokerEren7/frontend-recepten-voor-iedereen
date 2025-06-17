@@ -1,9 +1,24 @@
 *{
   box-sizing: border-box;
 }
-.App {
-  text-align: center;
+/* App.css of index.css */
+html, body {
+  height: 100%;
+  margin: 0;
 }
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+}
+
+/* Zorg dat main content de beschikbare ruimte opvult */
+main {
+  flex: 1;
+}
+
 
 .App-logo {
   height: 40vmin;

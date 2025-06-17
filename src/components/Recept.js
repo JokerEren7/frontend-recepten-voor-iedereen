@@ -28,7 +28,7 @@ const Recept = () => {
         
         const recipeData = await response.json();
         console.log('Fetched recipe data:', recipeData);
-        console.log('Image URL:', recipeData.image); // Log the image from recipeData, not recipe state
+        console.log('Image URL:', recipeData.image); 
         setRecipe(recipeData);
         
       } catch (err) {
@@ -42,7 +42,7 @@ const Recept = () => {
     fetchRecipe();
   }, [id]);
 
-  // Add this useEffect to log recipe state changes
+ 
   useEffect(() => {
     if (recipe) {
       console.log('Recipe state updated:', recipe);
@@ -50,9 +50,9 @@ const Recept = () => {
     }
   }, [recipe]);
 
-  if (loading) return <div className="loading">Loading recipe...</div>;
+  if (loading) return <div className="loading">Recept laden..</div>;
   if (error) return <div className="error">Error: {error}</div>;
-  if (!recipe) return <div className="error">Recipe not found</div>;
+  if (!recipe) return <div className="error">Recept niet gevonden..</div>;
 
   return (
     <article className='recipe-info'>
