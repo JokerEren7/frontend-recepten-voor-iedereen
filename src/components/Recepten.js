@@ -95,7 +95,7 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
                         className="recipe-image"
                       />
                       <div className="recipe-name-overlay">
-                        <h3>{recipe.recipe_name}</h3>
+                        <h2>{recipe.recipe_name}</h2>
                       </div>
                     </div>
                   )}
