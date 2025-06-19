@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // React Router Link gebruiken
 import '../styles/Footer.css';
 
 import facebookImg from '../assets/images/facebook-new.png';
@@ -12,23 +13,35 @@ const Footer = () => {
         <div className="footer__section">
           <h4>Recepten</h4>
           <ul>
-            <li>Soep recepten</li>
-            <li>Ontbijt recepten</li>
-            <li>Hoofdgerechten</li>
+            <li><Link to="/overzicht/3">Soep recepten</Link></li>
+            <li><Link to="/overzicht/2">Ontbijt recepten</Link></li>
+            <li><Link to="/overzicht/1">Hoofdgerechten</Link></li>
           </ul>
         </div>
         <div className="footer__section">
           <h4>Over ons</h4>
+          <ul>
+            <li><Link to="/over-ons">Ons verhaal</Link></li>
+          </ul>
         </div>
         <div className="footer__section">
           <h4>Contact</h4>
+          <ul>
+            <li><Link to="/contact">Neem contact op</Link></li>
+          </ul>
         </div>
         <div className="footer__section footer__socials">
           <h4>Volg ons</h4>
           <div className="footer__icons">
-            <img src={facebookImg} alt="Facebook" />
-        <img src={twitterImg} alt="Twitter" className="twitter-icon" />
-            <img src={instagramImg} alt="Instagram" />
+            <a href="https://facebook.com" target="_blank" >
+              <img src={facebookImg} alt="Facebook" />
+            </a>
+            <a href="https://twitter.com" target="_blank" >
+              <img src={twitterImg} alt="Twitter" className="twitter-icon" />
+            </a>
+            <a href="https://instagram.com" target="_blank" >
+              <img src={instagramImg} alt="Instagram" />
+            </a>
           </div>
         </div>
       </div>

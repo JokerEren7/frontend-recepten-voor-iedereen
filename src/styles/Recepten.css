@@ -7,6 +7,8 @@
 
 .recipe-title {
     margin-top: 50px;
+      font-size: 1.5rem; /* of wat je ontwerp vereist */
+
 }
 
 .recipes-grid {
@@ -43,7 +45,7 @@
     padding: 0 10px;
 }
 
-.recipe-name-overlay h3 {
+.recipe-name-overlay h2 {
     color: white;
     margin: 0;
     font-size: 14px;
@@ -51,7 +53,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
+.recipe-card {
+  width: 300px;
+  height: 300px; /* consistent met image */
+}
 
 
 

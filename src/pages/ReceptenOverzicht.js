@@ -8,22 +8,15 @@ const ReceptenOverzicht = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  //  alle recepten laden
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        setLoading(true);
         const response = await fetch('http://localhost:8000/api/recipes');
-
-        if (!response.ok) {
-          throw new Error('Kon recepten niet ophalen.');
-        }
-
+        if (!response.ok) throw new Error('Kon recepten niet ophalen.');
         const data = await response.json();
         setRecipes(data);
       } catch (err) {
         setError(err.message);
-        console.error('Fout bij ophalen recepten:', err);
       } finally {
         setLoading(false);
       }
@@ -32,51 +25,55 @@ const ReceptenOverzicht = () => {
     fetchRecipes();
   }, []);
 
-  // Functie om resultaten vanuit Zoekbalk te ontvangen
-  const handleSearchResults = (results) => {
-    setRecipes(results);
-  };
+  const handleSearchResults = (results) => setRecipes(results);
 
-  if (loading) return <div>Recepten laden...</div>;
-  if (error) return <div>Foutmelding: {error}</div>;
+  const getImageUrl = (path) =>
+    path.startsWith('http') ? path : `http://localhost:8000/${path}`;
 
   return (
-    <section>
-      {/* Zoekbalk hier toegevoegd */}
+    <main>
       <Zoekbalk onSearchResults={handleSearchResults} />
 
-      <article className='recipe-list'>
-        <h2 className='recipe-title'>Recepten</h2>
-        {recipes.length === 0 ? (
-          <p>Geen recepten gevonden.</p>
-        ) : (
-          <div className="recipes-grid">
-            {recipes.map((recipe, index) => (
+      <section className="recipe-list" aria-labelledby="recipe-title">
+<h1 id="recipe-title" className="recipe-title">Recepten</h1>
+
+        {loading && <p>Recepten laden...</p>}
+        {error && <p role="alert">Foutmelding: {error}</p>}
+        {!loading && recipes.length === 0 && <p>Geen recepten gevonden.</p>}
+
+        <div className="recipes-grid">
+          {recipes.map((recipe, index) => {
+            const imageUrl = getImageUrl(recipe.image);
+            return (
               <Link
-                key={recipe.id || `recipe-${index}`}
+                key={recipe.id}
                 to={`/recept/${recipe.id}`}
                 className="recipe-card-link"
+                aria-label={`Bekijk recept voor ${recipe.recipe_name}`}
               >
-                <div className="recipe-card">
-                  {recipe.image && (
-                    <div className="recipe-image-container">
-                      <img
-                        src={recipe.image && recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000/${recipe.image}`}
-                        alt={recipe.recipe_name}
-                        className="recipe-image"
-                      />
-                      <div className="recipe-name-overlay">
-                        <h3>{recipe.recipe_name}</h3>
-                      </div>
+                <article className="recipe-card">
+                  <div className="recipe-image-container">
+                    <img
+                      src={imageUrl}
+                      alt={`Foto van ${recipe.recipe_name}`}
+                      title='Bekijk recept'
+                      className="recipe-image"
+                      width="300"
+                      height="300"
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      fetchPriority={index === 0 ? 'high' : undefined}
+                    />
+                    <div className="recipe-name-overlay">
+                      <h2>{recipe.recipe_name}</h2>
                     </div>
-                  )}
-                </div>
+                  </div>
+                </article>
               </Link>
-            ))}
-          </div>
-        )}
-      </article>
-    </section>
+            );
+          })}
+        </div>
+      </section>
+    </main>
   );
 };
 

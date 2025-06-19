@@ -3,6 +3,8 @@
   padding: 30px 16px;
   color: white;
   font-size: 14px;
+    min-height: 120px;
+
 }
 
 .footer__container {

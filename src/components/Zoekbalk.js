@@ -6,7 +6,7 @@ const Zoekbalk = ({ onSearchResults }) => {
   const [searchData, setSearchData] = useState({
     recipe_name: '',
     category_id: '',
-    ingredients: '',
+  preparation_time: '',
     difficulty: ''
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -29,14 +29,15 @@ const Zoekbalk = ({ onSearchResults }) => {
     return categoryMap[categoryName] || '';
   };
 
-  const getDifficultyValue = (difficultyName) => {
-    const difficultyMap = {
-      'Makkelijk': 'easy',
-      'Gemiddeld': 'medium', 
-      'Moeilijk': 'hard'
-    };
-    return difficultyMap[difficultyName] || '';
+const getDifficultyValue = (difficultyName) => {
+  const difficultyMap = {
+    'Makkelijk': 'makkelijk',
+    'Gemiddeld': 'gemiddeld',
+    'Moeilijk': 'moeilijk'
   };
+  return difficultyMap[difficultyName] || '';
+};
+
 
 const handleSearch = async (e) => {
   e.preventDefault();
@@ -55,9 +56,16 @@ if (categoryId) {
   searchParams.append('category_id', categoryId);
 }
 
-if (searchData.ingredients.trim()) {
-  searchParams.append('ingredients', searchData.ingredients.trim());
+// Filter op bereidingstijd
+if (searchData.preparation_time === 'very_short') {
+  searchParams.append('max_preparation_time', 15);
+} else if (searchData.preparation_time === 'short') {
+  searchParams.append('max_preparation_time', 29);
+} else if (searchData.preparation_time === 'long') {
+  searchParams.append('min_preparation_time', 30);
 }
+
+
 
 const difficultyValue = getDifficultyValue(searchData.difficulty);
 if (difficultyValue) {
@@ -106,45 +114,53 @@ if (difficultyValue) {
               placeholder='Waar ben je naar op zoek?'
             />
         </div>
-        <div className='filter'>
-<select 
-  className='categorie filter-input' 
-  name='category_id'
-  value={searchData.category_id}
-  onChange={handleInputChange}
-  type='combobox'
->
-  <option value="">Categorie</option>
-  <option value="Ontbijt">Ontbijt</option>
-  <option value="Hoofdgerechten">Hoofdgerechten</option>
-  <option value="Soepen">Soepen</option>
-</select>
-        </div>
-        <div className='filter'>
-            <input 
-              className='ingredients filter-input' 
-              name='ingredients'
-              value={searchData.ingredients}
-              onChange={handleInputChange}
-              placeholder='Ingrediënten'
-            />
-        </div>
-        <div className='filter'>
-            <select 
-              className='difficulty filter-input' 
-              name='difficulty'
-              value={searchData.difficulty}
-              onChange={handleInputChange}
-              type='combobox'
-            >
-          <option value="">Moeilijkheid</option>
+<div className='filter'>
+  <label htmlFor="category_id" className="visually-hidden">Categorie</label>
+  <select 
+    id="category_id"
+    className='categorie filter-input' 
+    name='category_id'
+    value={searchData.category_id}
+    onChange={handleInputChange}
+  >
+    <option value="">Categorie</option>
+    <option value="Ontbijt">Ontbijt</option>
+    <option value="Hoofdgerechten">Hoofdgerechten</option>
+    <option value="Soepen">Soepen</option>
+  </select>
+</div>
 
-         <option value='Makkelijk'>Makkelijk</option>
-<option value='Gemiddeld'>Gemiddeld</option>
-<option value='Moeilijk'>Moeilijk</option>
+<div className='filter'>
+  <label htmlFor="preparation_time" className="visually-hidden">Bereidingstijd</label>
+  <select 
+    id="preparation_time"
+    className='preparation-time filter-input' 
+    name='preparation_time'
+    value={searchData.preparation_time}
+    onChange={handleInputChange}
+  >
+    <option value="">Bereidingstijd</option>
+    <option value="very_short">15 min of korter</option>
+    <option value="short">Korter dan 30 min</option>
+    <option value="long">30 min of langer</option>
+  </select>
+</div>
 
-            </select>
-        </div>
+<div className='filter'>
+  <label htmlFor="difficulty" className="visually-hidden">Moeilijkheidsgraad</label>
+  <select 
+    id="difficulty"
+    className='difficulty filter-input' 
+    name='difficulty'
+    value={searchData.difficulty}
+    onChange={handleInputChange}
+  >
+    <option value="">Moeilijkheid</option>
+    <option value='Makkelijk'>Makkelijk</option>
+    <option value='Gemiddeld'>Gemiddeld</option>
+    <option value='Moeilijk'>Moeilijk</option>
+  </select>
+</div>
         <div className='zoekknop-container'>
             <button 
               className='zoekknop'

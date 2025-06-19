@@ -8,6 +8,7 @@ import Overzicht from './pages/Overzicht';
 import Contact from './pages/Contact';
 import OverOns from './pages/OverOns';
 import Recept from './pages/Detail';
+
 import ReceptenOverzicht from './pages/ReceptenOverzicht'; 
 
 

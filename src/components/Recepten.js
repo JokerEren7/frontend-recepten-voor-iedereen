@@ -9,16 +9,19 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
   const [error, setError] = useState(null);
   const { id } = useParams();
 
+  // For pagination example
+  const [page, setPage] = useState(1);
+  const recipesPerPage = 9; // or whatever fits your grid
+
   useEffect(() => {
     if (searchResults) {
-      // Gebruik zoekresultaten i.p.v. API-oproep
       setRecipes(searchResults);
       setCategoryName(overrideCategoryName || 'Zoekresultaten');
       setLoading(false);
     } else {
       fetchData();
     }
-  }, [id, searchResults]);
+  }, [id, searchResults, page]);
 
   const fetchData = async () => {
     if (!id) {
@@ -30,10 +33,9 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
     try {
       setLoading(true);
 
-      const [recipesResponse, categoriesResponse] = await Promise.all([
-        fetch(`http://localhost:8000/api/recipes/categories/${id}`),
-        fetch(`http://localhost:8000/api/categories`)
-      ]);
+      // Example: fetch recipes with pagination parameters if API supports them
+      const recipesResponse = await fetch(`http://localhost:8000/api/recipes/categories/${id}?page=${page}&limit=${recipesPerPage}`);
+      const categoriesResponse = await fetch(`http://localhost:8000/api/categories`);
 
       if (!recipesResponse.ok || !categoriesResponse.ok) {
         throw new Error('Fout bij ophalen van data');
@@ -45,12 +47,21 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
 
       setRecipes(recipesData);
       setCategoryName(category ? category.category_name : `Categorie ${id}`);
+      setError(null);
     } catch (err) {
       setError(err.message);
-      console.error('Fout bij ophalen data:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePrevious = () => {
+    if (page > 1) setPage(prev => prev - 1);
+  };
+
+  const handleNext = () => {
+    // Here you should check if more pages exist. For demo, just increment.
+    setPage(prev => prev + 1);
   };
 
   if (loading) return <div>Recepten laden...</div>;
@@ -62,35 +73,54 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
       {recipes.length === 0 ? (
         <p>Geen recepten gevonden.</p>
       ) : (
-        <div className="recipes-grid">
-          {recipes.map((recipe, index) => (
-            <Link
-              key={recipe.id || recipe.recipe_id || `recipe-${index}`}
-              to={`/recept/${recipe.id || recipe.recipe_id || recipe.recipeId}`}
-              className="recipe-card-link"
-            >
-              <div className="recipe-card">
-                {recipe.image && (
-                  <div className="recipe-image-container">
-                    <img
-                      src={
-                        recipe.image.startsWith('http')
-                          ? recipe.image
-                          : `http://localhost:8000/${recipe.image}`
-                      }
-                      onLoad={() => console.log('Image loaded:', recipe.image)}
-                      alt={recipe.recipe_name}
-                      className="recipe-image"
-                    />
-                    <div className="recipe-name-overlay">
-                      <h3>{recipe.recipe_name}</h3>
+        <>
+          <div className="recipes-grid">
+            {recipes.map((recipe, index) => (
+              <Link
+                key={recipe.id || recipe.recipe_id || `recipe-${index}`}
+                to={`/recept/${recipe.id || recipe.recipe_id || recipe.recipeId}`}
+                className="recipe-card-link"
+              >
+                <div className="recipe-card">
+                  {recipe.image && (
+                    <div className="recipe-image-container">
+                      <img
+                        src={
+                          recipe.image.startsWith('http')
+                            ? recipe.image
+                            : `http://localhost:8000/${recipe.image}`
+                        }
+                        loading={recipe.image.includes('loaded-fries-pulled-chicken') ? 'eager' : 'lazy'}
+                        alt={recipe.recipe_name}
+                        className="recipe-image"
+                      />
+                      <div className="recipe-name-overlay">
+                        <h3>{recipe.recipe_name}</h3>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Pagination buttons with accessible labels */}
+          <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
+            <button 
+              onClick={handlePrevious} 
+              disabled={page === 1} 
+              aria-label="Vorige pagina"
+            >
+              Vorige
+            </button>
+            <button 
+              onClick={handleNext} 
+              aria-label="Volgende pagina"
+            >
+              Volgende
+            </button>
+          </div>
+        </>
       )}
     </article>
   );

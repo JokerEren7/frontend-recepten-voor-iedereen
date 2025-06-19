@@ -43,7 +43,9 @@ const Navbar = () => {
           </button>
 
           <div className="navbar__logo">
-            <img src={logo} alt="Recepten voor Iedereen" />
+            <Link to="/">
+              <img src={logo} alt="Recepten voor Iedereen" title='logo' />
+            </Link>
           </div>
 
           <nav className="navbar__nav navbar__nav--desktop">
