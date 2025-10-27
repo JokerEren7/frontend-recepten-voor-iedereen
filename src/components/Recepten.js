@@ -3,28 +3,37 @@ import { useParams, Link } from 'react-router-dom';
 import '../styles/Recepten.css';
 
 const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
+  const { id } = useParams();
+
+  // ✅ State
   const [recipes, setRecipes] = useState([]);
   const [categoryName, setCategoryName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { id } = useParams();
+
+  // ✅ Pagination state
+  const [page, setPage] = useState(1);
+  const pageSize = 9; // aantal recepten per pagina
+
+  // ✅ Pagination functions
+  const handlePrevious = () => setPage(prev => Math.max(prev - 1, 1));
+  const handleNext = () => setPage(prev => prev + 1);
 
   useEffect(() => {
     const load = async () => {
-      if (searchResults) {
-        setRecipes(searchResults);
-        setCategoryName(overrideCategoryName || 'Zoekresultaten');
-        setLoading(false);
-      } else {
-        if (!id) {
-          setError('Geen categorie-ID opgegeven');
-          setLoading(false);
-          return;
-        }
+      setLoading(true);
+      try {
+        if (searchResults) {
+          setRecipes(searchResults);
+          setCategoryName(overrideCategoryName || 'Zoekresultaten');
+        } else {
+          if (!id) {
+            setError('Geen categorie-ID opgegeven');
+            setLoading(false);
+            return;
+          }
 
-        try {
-          setLoading(true);
-
+          // Fetch recepten
           const recipesResponse = await fetch(`http://localhost:8000/api/recipes/categories/${id}`);
           const categoriesResponse = await fetch(`http://localhost:8000/api/categories`);
 
@@ -38,17 +47,21 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
 
           setRecipes(recipesData);
           setCategoryName(category ? category.category_name : `Categorie ${id}`);
-          setError(null);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
         }
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     load();
   }, [id, searchResults, overrideCategoryName]);
+
+  // ✅ Pagination logic
+  const paginatedRecipes = recipes.slice((page - 1) * pageSize, page * pageSize);
+  const totalPages = Math.ceil(recipes.length / pageSize);
 
   if (loading) return <div>Recepten laden...</div>;
   if (error) return <div>Foutmelding: {error}</div>;
@@ -61,7 +74,7 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
       ) : (
         <>
           <div className="recipes-grid">
-            {recipes.map((recipe, index) => (
+            {paginatedRecipes.map((recipe, index) => (
               <Link
                 key={recipe.id || recipe.recipe_id || `recipe-${index}`}
                 to={`/recept/${recipe.id || recipe.recipe_id || recipe.recipeId}`}
@@ -71,14 +84,10 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
                   {recipe.image && (
                     <div className="recipe-image-container">
                       <img
-                        src={
-                          recipe.image.startsWith('http')
-                            ? recipe.image
-                            : `http://localhost:8000/${recipe.image}`
-                        }
-                        loading={recipe.image.includes('loaded-fries-pulled-chicken') ? 'eager' : 'lazy'}
+                        src={recipe.image.startsWith('http') ? recipe.image : `http://localhost:8000/${recipe.image}`}
                         alt={recipe.recipe_name}
                         className="recipe-image"
+                        loading="lazy"
                       />
                       <div className="recipe-name-overlay">
                         <h3>{recipe.recipe_name}</h3>
@@ -90,19 +99,13 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
             ))}
           </div>
 
-          {/* Pagination buttons with accessible labels */}
+          {/* Pagination buttons */}
           <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '20px' }}>
-            <button 
-              onClick={handlePrevious} 
-              disabled={page === 1} 
-              aria-label="Vorige pagina"
-            >
+            <button onClick={handlePrevious} disabled={page === 1} aria-label="Vorige pagina">
               Vorige
             </button>
-            <button 
-              onClick={handleNext} 
-              aria-label="Volgende pagina"
-            >
+            <span>Pagina {page} van {totalPages}</span>
+            <button onClick={handleNext} disabled={page === totalPages} aria-label="Volgende pagina">
               Volgende
             </button>
           </div>
