@@ -9,7 +9,7 @@ import soepImg from '../assets/images/soep3.avif';
 const Categories = () => {
   return (
     <section className="categories">
-      <h2 className="categories__title">Populaire recepten</h2>
+      <h2 className="categories__title">Populaire categorieën</h2>
       <div className="categories__grid">
         <div className="category-card">
           <div className="category-card__image" style={{backgroundImage: `url(${hoofdgerechtenImg})`}}>

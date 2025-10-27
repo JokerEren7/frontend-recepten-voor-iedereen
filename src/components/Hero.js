@@ -3,30 +3,33 @@ import '../styles/Hero.css';
 import slide1 from '../assets/images/slide1.jpg';
 import slide2 from '../assets/images/slide2.jpg';
 import slide3 from '../assets/images/slide3.jpg';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  
-  const slides = [
-    {
-      image: slide1,
-      title: "Ontdek de smaak van vandaag",
-      subtitle: "Verse recepten voor elke gelegenheid",
-      buttonText: "Bekijk recepten"
-    },
-    {
-      image: slide2,
-      title: "Ontbijt maaltijden",
-      subtitle: "Voedzame ontbijt recepten ",
-      buttonText: "Ontdek ontbijt recepten"
-    },
-    {
-      image: slide3,
-      title: "Snelle gerechten",
-      subtitle: "Klaar in 30 minuten of minder",
-      buttonText: "Snelle recepten"
-    }
-  ];
+
+const slides = [
+  {
+    image: slide1,
+    title: "Ontdek de smaak van vandaag",
+    subtitle: "Verse recepten voor elke gelegenheid",
+    buttonText: "Bekijk recepten",
+    route: "/recepten"
+  },
+  {
+    image: slide2,
+    title: "Ontbijt maaltijden",
+    subtitle: "Voedzame ontbijt recepten",
+    buttonText: "Ontdek ontbijt recepten",
+    route: "/overzicht/2"
+  },
+  {
+    image: slide3,
+    title: "Snelle gerechten",
+    subtitle: "Klaar in 15 minuten of minder",
+    buttonText: "Snelle recepten",
+route: "/recepten?snelle-recepten"  }
+];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -60,13 +63,14 @@ const Hero = () => {
             <div className="slide-content">
               <h1>{slide.title}</h1>
               <p>{slide.subtitle}</p>
-              <button className="hero-button">{slide.buttonText}</button>
+        <Link to={slide.route} className="hero-button">
+          {slide.buttonText}
+        </Link>
             </div>
           </div>
         ))}
       </div>
 
-      {/* navigatie van die pijlen */}
       <button className="nav-arrow nav-arrow-left" onClick={prevSlide}>
         &#8249;
       </button>
@@ -74,7 +78,6 @@ const Hero = () => {
         &#8250;
       </button>
 
-      {/* navigatie van die puntjes */}
       <div className="nav-dots">
         {slides.map((_, index) => (
           <button

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // React Router Link gebruiken
+import { Link } from 'react-router-dom';
 import '../styles/Footer.css';
 
 import facebookImg from '../assets/images/facebook-new.png';
@@ -33,15 +33,16 @@ const Footer = () => {
         <div className="footer__section footer__socials">
           <h4>Volg ons</h4>
           <div className="footer__icons">
-            <a href="https://facebook.com" target="_blank" >
-              <img src={facebookImg} alt="Facebook" />
+            <a href="https://facebook.com" title='Facebook' target="_blank" rel="noreferrer">
+              <img src={facebookImg} title='facebook' alt="Facebook" />
             </a>
-            <a href="https://twitter.com" target="_blank" >
-              <img src={twitterImg} alt="Twitter" className="twitter-icon" />
+            <a href="https://twitter.com" title='Twitter' target="_blank" rel="noreferrer">
+              <img src={twitterImg} alt="Twitter" title='twitter' className="twitter-icon" />
             </a>
-            <a href="https://instagram.com" target="_blank" >
-              <img src={instagramImg} alt="Instagram" />
+            <a href="https://instagram.com" title='Instagram' target="_blank" rel="noreferrer">
+              <img src={instagramImg} title='instagram' alt="Instagram" />
             </a>
+
           </div>
         </div>
       </div>

@@ -55,14 +55,14 @@
   background-color: #45a049;
 }
 
-@media (max-width: 900px) {
-  .category-card {
-    width: 45%;
+@media (max-width: 768px) {
+    .category-card {
+    width: 80%;
   }
 }
 
 @media (max-width: 600px) {
   .category-card {
-    width: 100%;
+    width: 75%;
   }
 }

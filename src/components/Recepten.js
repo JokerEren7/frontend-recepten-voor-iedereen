@@ -9,60 +9,46 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
   const [error, setError] = useState(null);
   const { id } = useParams();
 
-  // For pagination example
-  const [page, setPage] = useState(1);
-  const recipesPerPage = 9; // or whatever fits your grid
-
   useEffect(() => {
-    if (searchResults) {
-      setRecipes(searchResults);
-      setCategoryName(overrideCategoryName || 'Zoekresultaten');
-      setLoading(false);
-    } else {
-      fetchData();
-    }
-  }, [id, searchResults, page]);
+    const load = async () => {
+      if (searchResults) {
+        setRecipes(searchResults);
+        setCategoryName(overrideCategoryName || 'Zoekresultaten');
+        setLoading(false);
+      } else {
+        if (!id) {
+          setError('Geen categorie-ID opgegeven');
+          setLoading(false);
+          return;
+        }
 
-  const fetchData = async () => {
-    if (!id) {
-      setError('Geen categorie-ID opgegeven');
-      setLoading(false);
-      return;
-    }
+        try {
+          setLoading(true);
 
-    try {
-      setLoading(true);
+          const recipesResponse = await fetch(`http://localhost:8000/api/recipes/categories/${id}`);
+          const categoriesResponse = await fetch(`http://localhost:8000/api/categories`);
 
-      // Example: fetch recipes with pagination parameters if API supports them
-      const recipesResponse = await fetch(`http://localhost:8000/api/recipes/categories/${id}?page=${page}&limit=${recipesPerPage}`);
-      const categoriesResponse = await fetch(`http://localhost:8000/api/categories`);
+          if (!recipesResponse.ok || !categoriesResponse.ok) {
+            throw new Error('Fout bij ophalen van data');
+          }
 
-      if (!recipesResponse.ok || !categoriesResponse.ok) {
-        throw new Error('Fout bij ophalen van data');
+          const recipesData = await recipesResponse.json();
+          const categoriesData = await categoriesResponse.json();
+          const category = categoriesData.find(cat => cat.id === parseInt(id));
+
+          setRecipes(recipesData);
+          setCategoryName(category ? category.category_name : `Categorie ${id}`);
+          setError(null);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setLoading(false);
+        }
       }
+    };
 
-      const recipesData = await recipesResponse.json();
-      const categoriesData = await categoriesResponse.json();
-      const category = categoriesData.find(cat => cat.id == id);
-
-      setRecipes(recipesData);
-      setCategoryName(category ? category.category_name : `Categorie ${id}`);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (page > 1) setPage(prev => prev - 1);
-  };
-
-  const handleNext = () => {
-    // Here you should check if more pages exist. For demo, just increment.
-    setPage(prev => prev + 1);
-  };
+    load();
+  }, [id, searchResults, overrideCategoryName]);
 
   if (loading) return <div>Recepten laden...</div>;
   if (error) return <div>Foutmelding: {error}</div>;
@@ -95,7 +81,7 @@ const Recepten = ({ searchResults = null, overrideCategoryName = '' }) => {
                         className="recipe-image"
                       />
                       <div className="recipe-name-overlay">
-                        <h2>{recipe.recipe_name}</h2>
+                        <h3>{recipe.recipe_name}</h3>
                       </div>
                     </div>
                   )}
