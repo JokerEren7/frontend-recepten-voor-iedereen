@@ -1,9 +1,160 @@
-import React,{useState,useEffect}from 'react';import{useParams}from 'react-router-dom';import '../styles/Recept.css';const Recept=()=>{const[recipe,setRecipe]=useState(null);const[loading,setLoading]=useState(!0);const[error,setError]=useState(null);const[amount,setAmount]=useState(1);const{id}=useParams();useEffect(()=>{const fetchRecipe=async()=>{if(!id){setError('No recipe ID provided');setLoading(!1);return}
-try{setLoading(!0);const response=await fetch(`http://localhost:8000/api/recipes/${id}`);if(!response.ok){throw new Error('Failed to fetch recipe')}
-const recipeData=await response.json();setRecipe(recipeData)}catch(err){setError(err.message);console.error('Error fetching recipe:',err)}finally{setLoading(!1)}};fetchRecipe()},[id]);const multiplyAmountsInText=(text,multiplier)=>{if(!text||multiplier<2)return text;return text.replace(/(\d+(?:[.,]\d+)?(?:\/\d+)?)/g,(match)=>{if(match.includes('/')){const[numerator,denominator]=match.split('/');const result=(parseFloat(numerator)*multiplier)/parseFloat(denominator);return result%1===0?result.toString():result.toFixed(1)}
-const normalizedNumber=match.replace(',','.');const number=parseFloat(normalizedNumber);const result=number*multiplier;const formattedResult=result%1===0?result.toString():result.toFixed(1);return match.includes(',')?formattedResult.replace('.',','):formattedResult})};const processIngredients=(ingredientsString)=>{if(!ingredientsString)return[];return ingredientsString.split(',').map(ingredient=>ingredient.trim()).filter(ingredient=>ingredient.length>0).flatMap(ingredient=>ingredient.split('\n').map(item=>item.trim()).filter(item=>item.length>0)).map(ingredient=>multiplyAmountsInText(ingredient,amount))};const processInstructions=(instructionsString)=>{if(!instructionsString)return[];return instructionsString.split(/(?=\d+\.)/).map(instruction=>instruction.trim()).map(instruction=>instruction.replace(/^\d+\.\s*/,'')).filter(instruction=>instruction.length>0)};const handleAmountChange=(e)=>{const newAmount=parseFloat(e.target.value)||null;setAmount(newAmount)};if(loading)return<div className="loading">Recept laden...</div>;if(error)return<div className="error">Foutmelding:{error}</div>;if(!recipe)return<div className="error">Recept niet gevonden</div>;const ingredientsList=processIngredients(recipe.ingredients);const instructionsList=processInstructions(recipe.instructions);return(<article className='recipe-info'>{recipe.image&&(<img className='image'
-src={recipe.image}
-alt={recipe.recipe_name}/>)}<h2 className='recipe-title'>{recipe.recipe_name}</h2><div className="recipe-text"><div className='ingredients'><h3>Ingrediënten voor<input
-className='people'
-value={amount}
-onChange={handleAmountChange}/>personen</h3>{ingredientsList.length>0?(<ul className='ingredients-list'>{ingredientsList.map((ingredient,index)=>(<li key={index}className='ingredient-item'>{ingredient}</li>))}</ul>):(<p>Geen ingrediënten beschikbaar</p>)}<p className='nutritional-values'>Voedingswaarden per persoon:{recipe.nutritional_values}</p><p className='difficulty'>Moeilijkheid:{recipe.difficulty}</p><p className='preparation-time'>Bereidingstijd:{recipe.preparation_time}minuten</p><div className='instructions'><h3>Bereidingswijze:</h3>{instructionsList.length>0?(<ol className='instructions-list'>{instructionsList.map((instruction,index)=>(<li key={index}className='instruction-item'>{instruction}</li>))}</ol>):(<p>Geen bereidingswijze beschikbaar</p>)}</div></div></div></article>)};export default Recept
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import '../styles/Recept.css';
+import API_URL from '../config/api';
+
+const Recept = () => {
+  const [recipe, setRecipe] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [amount, setAmount] = useState(1);
+  const { id } = useParams();
+
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      if (!id) {
+        setError('No recipe ID provided');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_URL}/api/recipes/${id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch recipe');
+        }
+
+        const recipeData = await response.json();
+        setRecipe(recipeData);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching recipe:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecipe();
+  }, [id]);
+
+  const multiplyAmountsInText = (text, multiplier) => {
+    if (!text || multiplier < 2) return text;
+
+    return text.replace(/(\d+(?:[.,]\d+)?(?:\/\d+)?)/g, (match) => {
+      if (match.includes('/')) {
+        const [numerator, denominator] = match.split('/');
+        const result = (parseFloat(numerator) * multiplier) / parseFloat(denominator);
+        return result % 1 === 0 ? result.toString() : result.toFixed(1);
+      }
+
+      const normalizedNumber = match.replace(',', '.');
+      const number = parseFloat(normalizedNumber);
+      const result = number * multiplier;
+      const formattedResult = result % 1 === 0 ? result.toString() : result.toFixed(1);
+      return match.includes(',') ? formattedResult.replace('.', ',') : formattedResult;
+    });
+  };
+
+  const processIngredients = (ingredientsString) => {
+    if (!ingredientsString) return [];
+
+    return ingredientsString
+      .split(',')
+      .map(ingredient => ingredient.trim())
+      .filter(ingredient => ingredient.length > 0)
+      .flatMap(ingredient =>
+        ingredient.split('\n')
+          .map(item => item.trim())
+          .filter(item => item.length > 0)
+      )
+      .map(ingredient => multiplyAmountsInText(ingredient, amount));
+  };
+
+  const processInstructions = (instructionsString) => {
+    if (!instructionsString) return [];
+
+    return instructionsString
+      .split(/(?=\d+\.)/)
+      .map(instruction => instruction.trim())
+      .map(instruction => instruction.replace(/^\d+\.\s*/, ''))
+      .filter(instruction => instruction.length > 0);
+  };
+
+  const handleAmountChange = (e) => {
+    const newAmount = parseFloat(e.target.value) || null;
+    setAmount(newAmount);
+  };
+
+  if (loading) return <div className="loading">Recept laden...</div>;
+  if (error) return <div className="error">Foutmelding: {error}</div>;
+  if (!recipe) return <div className="error">Recept niet gevonden</div>;
+
+  const ingredientsList = processIngredients(recipe.ingredients);
+  const instructionsList = processInstructions(recipe.instructions);
+
+  return (
+    <article className='recipe-info'>
+      {recipe.image && (
+        <img
+          className='image'
+          src={recipe.image}
+          alt={recipe.recipe_name}
+        />
+      )}
+
+      <h2 className='recipe-title'>{recipe.recipe_name}</h2>
+
+      <div className="recipe-text">
+        <div className='ingredients'>
+          <h3>
+            Ingrediënten voor
+            <input
+              className='people'
+              value={amount}
+              onChange={handleAmountChange}
+            />
+            personen
+          </h3>
+
+          {ingredientsList.length > 0 ? (
+            <ul className='ingredients-list'>
+              {ingredientsList.map((ingredient, index) => (
+                <li key={index} className='ingredient-item'>
+                  {ingredient}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>Geen ingrediënten beschikbaar</p>
+          )}
+
+          <p className='nutritional-values'>
+            Voedingswaarden per persoon: {recipe.nutritional_values}
+          </p>
+          <p className='difficulty'>Moeilijkheid: {recipe.difficulty}</p>
+          <p className='preparation-time'>
+            Bereidingstijd: {recipe.preparation_time} minuten
+          </p>
+
+          <div className='instructions'>
+            <h3>Bereidingswijze:</h3>
+            {instructionsList.length > 0 ? (
+              <ol className='instructions-list'>
+                {instructionsList.map((instruction, index) => (
+                  <li key={index} className='instruction-item'>
+                    {instruction}
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p>Geen bereidingswijze beschikbaar</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+};
+
+export default Recept;
