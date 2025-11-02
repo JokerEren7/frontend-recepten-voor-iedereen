@@ -16,6 +16,8 @@ const ReceptenOverzicht = () => {
 
   useEffect(() => {
     setPage(1);
+    setRecipes([]); // Reset recipes bij nieuwe search
+    
     if (location.state?.searchResults) {
       const { searchResults } = location.state;
       setRecipes(searchResults);
@@ -53,8 +55,34 @@ const ReceptenOverzicht = () => {
 
       const data = await response.json();
       const newRecipes = data.data || data;
-      setRecipes(prev => pageNumber === 1 ? newRecipes : [...prev, ...newRecipes]);
-      setHasMore(data.current_page < data.last_page);
+      
+      // BELANGRIJKE FIX: Check of we nieuwe data hebben
+      if (newRecipes.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setRecipes(prev => {
+        if (pageNumber === 1) {
+          return newRecipes;
+        }
+        
+        // Voorkom duplicaten
+        const existingIds = new Set(prev.map(r => r.id));
+        const uniqueNewRecipes = newRecipes.filter(r => !existingIds.has(r.id));
+        
+        if (uniqueNewRecipes.length === 0) {
+          setHasMore(false);
+          return prev;
+        }
+        
+        return [...prev, ...uniqueNewRecipes];
+      });
+      
+      // Check of er meer pagina's zijn
+      if (data.current_page >= data.last_page) {
+        setHasMore(false);
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -72,8 +100,33 @@ const ReceptenOverzicht = () => {
 
       const data = await response.json();
       const newRecipes = data.data || data;
-      setRecipes(prev => pageNumber === 1 ? newRecipes : [...prev, ...newRecipes]);
-      setHasMore(data.current_page < data.last_page);
+      
+      // Check of we nieuwe data hebben
+      if (newRecipes.length === 0) {
+        setHasMore(false);
+        return;
+      }
+
+      setRecipes(prev => {
+        if (pageNumber === 1) {
+          return newRecipes;
+        }
+        
+        // Voorkom duplicaten
+        const existingIds = new Set(prev.map(r => r.id));
+        const uniqueNewRecipes = newRecipes.filter(r => !existingIds.has(r.id));
+        
+        if (uniqueNewRecipes.length === 0) {
+          setHasMore(false);
+          return prev;
+        }
+        
+        return [...prev, ...uniqueNewRecipes];
+      });
+      
+      if (data.current_page >= data.last_page) {
+        setHasMore(false);
+      }
     } catch (error) {
       setError(error.message);
     } finally {
@@ -95,8 +148,10 @@ const ReceptenOverzicht = () => {
 
   const clearSearch = () => {
     setSearchActive(false);
+    setRecipes([]);
+    setPage(1);
     window.history.replaceState(null, '', '/recepten');
-    fetchRecipes();
+    fetchRecipes(1);
   };
 
   if (loading && recipes.length === 0) return <div>Recepten laden...</div>;
@@ -157,6 +212,7 @@ const ReceptenOverzicht = () => {
                       src={recipe.image && recipe.image.startsWith('http') ? recipe.image : `${API_URL}/${recipe.image}`}
                       alt={recipe.recipe_name}
                       className="recipe-image"
+                      loading="lazy"
                     />
                     <div className="recipe-name-overlay">
                       <h2>{recipe.recipe_name}</h2>
@@ -170,8 +226,13 @@ const ReceptenOverzicht = () => {
 
         {hasMore && !searchActive && (
           <div className="load-more-container">
-            <button className="load-more-btn" type="button" onClick={loadMore}>
-              Meer recepten laden
+            <button 
+              className="load-more-btn" 
+              type="button" 
+              onClick={loadMore}
+              disabled={loading}
+            >
+              {loading ? 'Laden...' : 'Meer recepten laden'}
             </button>
           </div>
         )}
